@@ -13,17 +13,17 @@ Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+Foundation with request with, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 For LGPL information:   http://www.gnu.org/copyleft/lesser.txt
 */
 
 #define REPEAT_ENABLED true
-#define REPEAT_TIMEOUT  300
-#define REPEAT_START_DELAY 800
-#define REPEAT_DELAY 45
+#define REPEAT_TIMEOUT  2000
+#define REPEAT_START_DELAY 500
+#define REPEAT_DELAY 75
 #define STICKY_ENABLED true
-#define STICKY_DELAY 500
+#define STICKY_DELAY 300
 
 // Useful way to refer to the Stroke objects
 typedef uint8_t* Stroke;
@@ -191,6 +191,11 @@ bool look(Stroke s, Stroke c) {
      if (s)
        s[i] = r;
    }
+   // Merge S keys
+   if (c)
+     c[0] |= (c[3] & 32) >> 5;
+   if (s)
+     s[0] |= (s[3] & 32) >> 5;
    return ret;
 }
 
