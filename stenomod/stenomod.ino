@@ -66,13 +66,14 @@ void default_settings();
 void reset_state(bool set_prev);
 
 // Setup ports and serial
-// All unused ports get weak pullup
+// All unused ports get output high
 void setup() {
   for (int i = 0; i < 20; i++) {
     pinMode (i, INPUT_PULLUP);
   }
   for (int i = 0; i < 4; i++) {
-    pinMode (pin [i], INPUT);
+    pinMode (pin [i], OUTPUT);
+    digitalWrite(pin[i], HIGH);
   }
   led(false);
   Serial.begin(9600);
@@ -118,17 +119,6 @@ void led(bool on) {
    digitalWrite(LED, on ? HIGH : LOW);
 }
 
-// Set to output mode, and pull low
-// to measure a row.
-void set_output(uint8_t p) {
-   pinMode(pin[p], OUTPUT);
-   digitalWrite(pin[p], LOW);
-}
-
-// Set to input mode
-void set_input(uint8_t p) {
-   pinMode(pin[p], INPUT);
-}
 
 // Read the current byte, where
 // bit value of 1 means key is
@@ -150,10 +140,10 @@ void send_byte(uint8_t b) {
 // Read a column of keys
 uint8_t read_column(uint8_t p) {
    uint8_t ret;
-   set_output(p);
+   digitalWrite(pin[p], LOW);
    delayMicroseconds(10);
    ret = read_byte();
-   set_input(p);
+   digitalWrite(pin[p], HIGH);
    return ret;
 }
 
@@ -248,6 +238,7 @@ void scan_keys() {
      while (look(NULL, state.current_stroke) == false);
      // De-bounce
      delay(20);
+     clear_stroke(state.current_stroke);
    } while (look(NULL, state.current_stroke) == false);
 
    // Loop until all keys are lifted
